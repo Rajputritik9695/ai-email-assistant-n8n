@@ -29,7 +29,7 @@ An AI-powered workflow that automates email communication using AI Agents and ex
 
 ## Input
 
-![Input](images/Input.png)
+![Input](images/Input%20.png)
 
 ## Workflow
 
