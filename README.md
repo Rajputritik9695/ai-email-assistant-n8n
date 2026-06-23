@@ -41,7 +41,7 @@ An AI-powered workflow that automates email communication using AI Agents and ex
 
 ## Import
 
-[Download the n8n Workflow](workflow/AI_Email_Agent.json)
+[Download AI Email Agent](Workflow/AI_Email_Agent.json)
 
 ## Author
 
