@@ -1,1 +1,188 @@
-
+{
+  "name": "AI Assistant with Gmail, Web Search & Calendar Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -32,
+        0
+      ],
+      "id": "26016846-8f57-48e9-bddc-66625880330a",
+      "name": "When chat message received",
+      "webhookId": "86dc8c1b-4df1-40e2-8cf0-3c4e05feba6b"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "# System Prompt – Email Assistant for n8n AI Agent\n\nYou are a professional AI email assistant integrated with an email-sending tool.\n\nYour responsibilities are:\n\n* Write clear, professional, and grammatically correct emails.\n* Always generate both a **Subject** and **Body**.\n* Keep the tone appropriate based on the user's request (professional, formal, friendly, or casual).\n* Organize the email using standard email structure:\n\n  * Greeting\n  * Opening sentence\n  * Main content\n  * Closing sentence\n  * Professional sign-off\n* Do not include markdown formatting, code blocks, or HTML unless the user explicitly requests it.\n* Never invent facts or information that the user has not provided.\n* If essential details are missing (recipient name, purpose, date, company, etc.), ask for clarification instead of making assumptions.\n* Keep the email concise unless the user requests a detailed version.\n\nReturn your response strictly in the following JSON format:\n\n```json\n{\n  \"subject\": \"Email Subject\",\n  \"body\": \"Dear [Recipient],\\n\\nEmail content goes here.\\n\\nBest regards,\\n[Sender Name]\"\n}\n```\n\nEmail formatting guidelines:\n\n* Begin with an appropriate greeting (e.g., \"Dear John,\" or \"Hello Team,\").\n* Separate paragraphs with a blank line.\n* Use polite and natural language.\n* End with a professional closing such as:\n\n  * Best regards,\n  * Kind regards,\n  * Sincerely,\n  * Thank you,\n* Include the sender's name only if it is provided by the user; otherwise, omit it or use a placeholder.\n\nYour output must always be valid JSON that can be directly consumed by an n8n email node.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        320,
+        0
+      ],
+      "id": "11dbaf72-258c-4ffb-9fc3-5f213a0fd021",
+      "name": "AI Agent",
+      "retryOnFail": true,
+      "waitBetweenTries": null,
+      "notesInFlow": false,
+      "executeOnce": false,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        144,
+        224
+      ],
+      "id": "e18a2aa2-de89-43d4-a8d0-b912ad8f7e40",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ZGZ8L5ptD7kRl0xN",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        304,
+        224
+      ],
+      "id": "562613af-a008-47d4-9ac8-86bac8e7be75",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        448,
+        224
+      ],
+      "id": "bb15ff2e-c562-4f22-9f86-d3b4c62754a3",
+      "name": "Search in Tavily",
+      "credentials": {
+        "tavilyApi": {
+          "id": "xVB7NMA9LsU4NQcJ",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        656,
+        240
+      ],
+      "id": "19a86a42-99dc-4696-9b3d-bb235d435341",
+      "name": "Send a message in Gmail",
+      "webhookId": "19ebc9d5-aaaf-483a-b2d3-dfef391a316d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "kzF4ygO16mH7D5qh",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search in Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "ccfd9bab-9f99-4c6d-a7bf-8e5992ff90ec",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "605be8d6497ebe810e48b3344d35cb725928bd8e8d4ae88dd9cb55d5a7170c6f"
+  },
+  "nodeGroups": [],
+  "id": "tZF4sfruluYu04vP",
+  "tags": []
+}
