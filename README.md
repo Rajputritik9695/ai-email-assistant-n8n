@@ -23,7 +23,7 @@ An AI-powered workflow that automates email communication using AI Agents and ex
 2. AI Agent understands the request.
 3. Uses tools like Gmail or Web Search.
 4. Performs the requested action.
-5. Returns a confirmation.
+5. Returns a confirmation..
 
 ## Screenshot
 
